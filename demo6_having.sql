@@ -6,7 +6,7 @@ select *from Employees
 --找部门男性人数大于1的部门
 SELECT 
 	EmpDepId as 部门ID,
-	部门男性人数=COUNT(EmpGender)
+	部门男性人数=COUNT(1)
 	FROM Employees
 	WHERE EmpGender='男'
 	GROUP BY EmpDepId
@@ -30,7 +30,7 @@ SELECT
 	SUM(销售数量*销售价格) as 销售总价
 	FROM MyOrders
 	GROUP BY 商品名称
-	HAVING SUM(销售数量*销售价格) > 3000 --只要销售总价大于3000的
+	HAVING SUM(销售数量*销售价格) > 3000 --只要销售总价大于3000的，having不能使用自己指定的列名
 	ORDER BY 销售总价 DESC
 	
 --找购买可口可乐大于20的人

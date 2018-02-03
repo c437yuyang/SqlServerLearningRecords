@@ -3,8 +3,10 @@ USE AdventureWorks2008
 --union会去除重复并重新排列数据,union all直接连接所有
 
 --默认使用第一个的列名
+
+select * from Humanresources.Department
 SELECT TOP 2 Name from Humanresources.Department
-union all
+union all --进行连接的结果必须列数一致才行
 SELECT top 2 [JOBTITLE] from Humanresources.Employee
 
 --通常用于最后加一个计算，比如总数这种
@@ -18,10 +20,18 @@ SELECT
 	FROM Employees
 	WHERE EmpGender='男'
 	GROUP BY EmpDepId
+	
 UNION ALL
 SELECT '总男性人数',COUNT(*) FROM --最后添加总计
 (SELECT * FROM Employees WHERE EmpGender='男') AS T
-ORDER BY 部门男性人数 desc
+ORDER BY 部门男性人数 desc 
+
+--上面的做法有点不舒服，总人数要放最后的话，必须按照增序排序才行，因为orderby 只能放到最后，不能再union all前面加order by
+--还没找到解决方法，子查询不行，子查询内部不能用orderby order by只能对最终结果排序，之后考虑用row_number来处理
+
+
+
+
 
 SELECT 
 	最大年龄=MAX(EmpAge),
@@ -35,7 +45,7 @@ UNION ALL
 SELECT 名称='最小年龄',年龄=min(EmpAge)
 FROM Employees
 UNION ALL
-SELECT 名称='平均年龄',年龄=avg(EmpAge)*1.0
+SELECT 名称='平均年龄',年龄1=avg(EmpAge)*1.0 --可以看到这里列名不一样，但是最终会按照第一个指定的列名来
 FROM Employees
 
 ---------使用UNION一次向表中插入多条数据
