@@ -84,11 +84,11 @@ INSERT into TestA values(10,20,30)
 
 SELECT * FROM TestA
 
-SELECT	第一列最大值=CASE
+SELECT	AB最大值=CASE
 				WHEN A > B THEN A
 				ELSE B
 				END				
-		,第二列最大值=case
+		,BC最大值=case
 				when B > C THEN B
 				ELSE C
 				END				

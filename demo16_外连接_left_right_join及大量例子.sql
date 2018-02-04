@@ -43,7 +43,6 @@ SELECT
 	 * from TblStudent 
 	 WHERE tSId NOT IN 
 	(SELECT TblScore.tSId from TblScore)
-		
 
 --查询没有参加考试的学生的信息,通过连接查询实现
 SELECT
@@ -85,9 +84,9 @@ SELECT
 	t1.tEnglish,
 	t1.tMath	
 	from TblScore as t1 
-	RIGHT JOIN TblStudent as t2 
-	on t1.tSId=t2.tSId AND t2.tSGender='男'  
-	WHERE t1.tScoreId IS NULL 
+	RIGHT JOIN TblStudent as t2
+	on t1.tSId=t2.tSId AND t2.tSGender='男'
+	WHERE t1.tScoreId IS NULL
 
 --正确的写法，写在where里面进行筛选男生
 SELECT
@@ -118,3 +117,9 @@ SELECT
 	from TblStudent as t1
 	LEFT JOIN TblScore as t2 
 	on t1.tsId=t2.tsId
+	
+--其实还有全连接，用full关键字，就是两个表都保留，没有的就显示null
+
+select * from tblStudent as t1
+ full join  tblscore as t2 
+	on t1.tsid = t2.tsid

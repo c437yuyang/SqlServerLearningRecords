@@ -108,6 +108,7 @@ SELECT * FROM Employees WHERE EmpName LIKE '张__'
 
 --%百分号是通配符
 SELECT * FROM Employees WHERE EmpName LIKE '张%'
+SELECT * FROM Employees WHERE EmpGender LIKE '男%' --这里%是可以代表0个字符的
 SELECT * FROM Employees WHERE EmpName LIKE '张%' and LEN(EmpName)=3
 
 UPDATE Employees set EmpName=REPLACE(EmpName,'张',' ')
@@ -134,7 +135,9 @@ SELECT 工资=2000+NULL --任何值和null进行计算都是null，所以在计算前一定要先判断是
 --1.必须放到最后order by
 --2.根据多列进行排序，order by a desc,b asc 则当a相同再比较b
 --3.也可以按表达式进行排序
+--4.也可用自己指定的列名进行排序
 SELECT * FROM Employees ORDER BY (len(EmpName)+LEN(EmpAddress))
+SELECT *,(len(EmpName)+LEN(EmpAddress)) as 长度 FROM Employees ORDER BY 长度
 
 
 

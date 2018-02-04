@@ -4,8 +4,12 @@ SELECT * from PhoneGroup
 SELECT * FROM PhoneGroup,PhoneNum --笛卡尔积
 
 SELECT * FROM PhoneNum
-SELECT * FROM PhoneNum
-INNER JOIN PhoneGroup on PhoneNum.pTypeId=PhoneGroup.ptid --为每个联系人增加一列分组名称
+
+SELECT 
+	* --这里的*就是两个表的所有列了
+	FROM PhoneNum
+	INNER JOIN PhoneGroup 
+	on PhoneNum.pTypeId=PhoneGroup.ptid --为每个联系人增加一列分组名称
 
 SELECT * FROM PhoneNum --可以看出不等于是完全不一样的（笛卡尔积的原因）
 INNER JOIN PhoneGroup on PhoneNum.pTypeId<>PhoneGroup.ptid
@@ -42,7 +46,7 @@ SELECT
 	tc.tClassName	
 FROM TblStudent as ts
 INNER JOIN TblClass as tc 
-on ts.tSClassId=tc.tClassId
+on ts.tSClassId=tc.tClassId --可以看到NULL也会被处理
 
 --查询学生年龄大于20岁的年龄姓名班级
 SELECT	

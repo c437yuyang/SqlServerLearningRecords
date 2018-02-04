@@ -4,7 +4,8 @@ USE Itcast2014
 SELECT * FROM TblClass
 SELECT * from TblStudent 
 
-SELECT * from TblStudent WHERE tSClassId=
+--嵌套子查询
+SELECT * from TblStudent WHERE tSClassId = --这里用where in 也可以的
 (SELECT tClassId FROM TblClass where tClassName='高二二班')
 
 SELECT *,班级='高二二班' from TblStudent WHERE tSClassId=
@@ -23,6 +24,12 @@ SELECT *
 		(SELECT * 
 			from TblClass as tc 
 			WHERE ts.tSClassId = tc.tClassId AND tc.tClassName='高二二班')
+
+--子查询分为嵌套子查询和相关子查询
+--具体请看https://www.cnblogs.com/ziyandeyanhuo/p/7877519.html
+--嵌套子查询的执行不依赖与外部的查询，
+--相关子查询的执行依赖于外部查询。多数情况下是子查询的WHERE子句中引用了外部查询的表
+
 
 
 --------------------------使用top实现分页查询(有分页一定要有排序)
@@ -81,9 +88,9 @@ SELECT TOP (7*1) * from Customers WHERE CustomerID NOT in
 --over里面的order by指明行编号的生成顺序，最后的order by指明最终排序
 SELECT
 	*,
-	编号=ROW_NUMBER() OVER(ORDER BY CustomerID ASC) 
+	编号=ROW_NUMBER() OVER(ORDER BY CustomerID) 
 	from Customers 
-	ORDER BY 编号 
+	ORDER BY 编号 --其实最后的这个可以不要了，前面只要order by了，数据就已经是按照over里面指定的排序的了，如果需要按照其他列排序才重新制定
 	asc
 	
 --每页显示七条,查看第八爷
@@ -108,3 +115,13 @@ SELECT * FROM
 )
 as t
 where t.编号 between (11-1)*10+1 and 11*10
+
+
+--partition by
+--partition  by关键字是分析性函数的一部分，它和聚合函数（如group by）不同的地方在于它能返回一个分组中的多条记录，而聚合函数一般只有一条反映统计值的记录，
+--partition  by用于给结果集分组，如果没有指定那么它把整个结果集作为一个分组。
+--partition by 与group by不同之处在于前者返回的是分组里的每一条数据，并且可以对分组数据进行排序操作。后者只能返回聚合之后的组的数据统计值的记录。
+SELECT
+	*,
+	编号=ROW_NUMBER() OVER(partition by city ORDER BY CustomerID) --这时order by 就是按照partition后的数据排序的了，并且是对partition得到的不同组分别内部进行排序，不会组间排序
+	from Customers 
