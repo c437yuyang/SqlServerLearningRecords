@@ -42,6 +42,8 @@ select * from tblstudent t1 where t1.tsage>
 		where t1.tSClassId=t2.tSClassid
 )
 
+
+
 --每个班的平均年龄
 select 
 tsClassId,平均age=avg(tsAge)
@@ -53,6 +55,44 @@ group by tsClassId
 --嵌套子查询:子查询的执行不依赖于外部的查询，
 --相关子查询:子查询的执行要依赖于外部查询。多数情况下是子查询的WHERE子句中引用了外部查询的表
 
+--一些例子
+
+select * from tblstudent
+--选出第5到7条记录
+select top 3 * from tblstudent where tsid not in (select top 4 tsid from tblstudent)
+--另一种方法，先正序拿到前7个，再逆序拿前三个
+select top 3 * from tblstudent where tsid in (
+	select top 7 tsid from tblstudent order by tsid asc
+) order by tsid desc --但是这样是逆序的
+--因此再套一层,变成正序
+select * from 
+(
+	select top 3 * from tblstudent where tsid in (
+		select top 7 tsid from tblstudent order by tsid asc
+	) order by tsid desc
+) t2 order by t2.tsid asc
+
+--删除第5到第7条数据
+select * into StudentCopy from tblStudent
+select * from studentcopy
+
+delete from studentcopy where tsid in 
+(
+	select top 3 tsid from tblstudent where tsid not in (select top 4 tsid from tblstudent)
+)
+
+--删除前9条数据
+delete from studentcopy where tsid in (
+	select top 9 tsid from studentcopy order by tsid asc
+)
+
+select StudentName from Student where StudentId in (
+select StudentId from Study group by StudentId having (count(Cousid) between 2 and 3))
+
+--选出附属市大于20的省
+select areaname,areaid from tblarea where areaid in(
+	select AreaPid from tblArea group by AreaPid having(count(1)>20)
+)
 
 
 --------------------------使用top实现分页查询(有分页一定要有排序)
@@ -103,20 +143,7 @@ SELECT TOP (7*1) * from Customers WHERE CustomerID NOT in
 	) 
 ) ORDER BY CustomerID ASC
 
-select * from tblstudent
---选出第5到7条记录
-select top 3 * from tblstudent where tsid not in (select top 4 tsid from tblstudent)
---另一种方法，先正序拿到前7个，再逆序拿前三个
-select top 3 * from tblstudent where tsid in (
-	select top 7 tsid from tblstudent order by tsid asc
-) order by tsid desc --但是这样是逆序的
---因此再套一层,变成正序
-select * from 
-(
-	select top 3 * from tblstudent where tsid in (
-		select top 7 tsid from tblstudent order by tsid asc
-	) order by tsid desc
-) t2 order by t2.tsid asc
+
 
 ------------------------使用row_number()实现分页(缺点是必须自己指明列名，不然会多一行row_number)
 --1.为数据排序,然后编号
