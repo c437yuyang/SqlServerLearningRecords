@@ -29,9 +29,37 @@ ORDER BY 部门男性人数 desc
 --上面的做法有点不舒服，总人数要放最后的话，必须按照增序排序才行，因为orderby 只能放到最后，不能再union all前面加order by
 --还没找到解决方法，子查询不行，子查询内部不能用orderby order by只能对最终结果排序，之后考虑用row_number来处理
 
+--解决办法:
+--先添加行号，利用行号完成自己想要的排序
+select t1.*,no = row_number() over(order by t1.部门男性人数 desc)
+ from 
+(
+	SELECT 
+	'部门:'+convert(varchar,EmpDepId) as 部门ID,
+	部门男性人数=COUNT(EmpGender)
+	FROM Employees
+	WHERE EmpGender='男'
+	GROUP BY EmpDepId
+) as t1
 
-
-
+--再做成子查询去掉不要的列
+select 部门ID,部门男性人数 from --神奇，这里用*和用指定列结果竟然不一样。。是因为自动帮你优化了吗？就是说检测到你并不需要row_number这一列就不执行生成行号的语句了
+--select * from 
+(
+	select t1.*,no = row_number() over(order by t1.部门男性人数 desc)
+		 from 
+		(
+			SELECT 
+			'部门:'+convert(varchar,EmpDepId) as 部门ID,
+			部门男性人数=COUNT(EmpGender)
+			FROM Employees
+			WHERE EmpGender='男'
+			GROUP BY EmpDepId
+		) as t1
+) as t2
+UNION ALL
+SELECT '总男性人数',COUNT(*) FROM --最后添加总计
+(SELECT * FROM Employees WHERE EmpGender='男') AS T
 
 SELECT 
 	最大年龄=MAX(EmpAge),
